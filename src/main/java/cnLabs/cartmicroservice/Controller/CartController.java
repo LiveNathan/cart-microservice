@@ -1,8 +1,6 @@
 package cnLabs.cartmicroservice.Controller;
 
 import cnLabs.cartmicroservice.Service.CartService;
-import com.netflix.appinfo.InstanceInfo;
-import com.netflix.discovery.EurekaClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,14 +11,6 @@ public class CartController {
 
     @Autowired
     CartService cartService;
-
-//    @Autowired
-//    EurekaClient discoveryClient;
-//
-//    public String userServiceUrl() {
-//        InstanceInfo instance = discoveryClient.getNextServerFromEureka("USER-MICROSERVICE", false);
-//        return instance.getHomePageUrl();
-//    }
 
     @GetMapping("/{userId}")
     public ResponseEntity<?> getCartByUserId(@PathVariable Long userId) {
@@ -45,6 +35,16 @@ public class CartController {
                                             @PathVariable("userId") Long userId) {
         try {
             return ResponseEntity.ok(cartService.removeCartItem(cartItemId, userId));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<?> deleteCart(@PathVariable("userId") Long userId) {
+        try {
+            cartService.deleteCartByUserId(userId);
+            return ResponseEntity.ok().body("User " + userId + " cart deleted.");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

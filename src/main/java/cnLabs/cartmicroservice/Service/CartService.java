@@ -5,11 +5,8 @@ import cnLabs.cartmicroservice.Model.Cart;
 import cnLabs.cartmicroservice.Model.CartItem;
 import cnLabs.cartmicroservice.Repo.CartRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.loadbalancer.LoadBalanced;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 
 @Service
 public class CartService {
@@ -50,6 +47,13 @@ public class CartService {
         cart.removeCartItem(cartItemId);
         return cartRepository.save(cart);
     }
+
+    @Transactional
+    public void deleteCartByUserId(Long userId) {
+        Cart cart = cartRepository.findByUserId(userId);
+        cartRepository.delete(cart);
+    }
+
 
     @Transactional
     public Cart updateAmount(Long userId, Long cartItemId, Integer amount) {
