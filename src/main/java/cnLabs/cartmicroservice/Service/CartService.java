@@ -1,17 +1,24 @@
 package cnLabs.cartmicroservice.Service;
 
+import cnLabs.cartmicroservice.Clients.UserServiceClient;
 import cnLabs.cartmicroservice.Model.Cart;
 import cnLabs.cartmicroservice.Model.CartItem;
 import cnLabs.cartmicroservice.Repo.CartRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 public class CartService {
 
     @Autowired
     CartRepository cartRepository;
+
+    @Autowired
+    UserServiceClient userServiceClient;
 
     public Cart getCartByUserId(Long userId) {
         Cart cart = cartRepository.findByUserId(userId);
@@ -32,7 +39,9 @@ public class CartService {
             }
         }
         cart.addCartItem(itemId);
-        return cartRepository.save(cart);
+        cart = cartRepository.save(cart);
+        userServiceClient.reportCartEvent(userId);
+        return cart;
     }
 
     @Transactional
