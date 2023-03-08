@@ -29,6 +29,6 @@ public class Cart {
     }
 
     public void removeCartItem(Long cartItemId) {
-        items.removeIf(ci -> ci.getId().equals(cartItemId));
+        items.removeIf(ci -> ci.getItemId().equals(cartItemId));
     }
 }

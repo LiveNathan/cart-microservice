@@ -40,6 +40,16 @@ public class CartController {
         }
     }
 
+    @DeleteMapping("/delete-item/{userId}/{cartItemId}")
+    public ResponseEntity<?> removeCartItemCompletely(@PathVariable("cartItemId") Long cartItemId,
+                                            @PathVariable("userId") Long userId) {
+        try {
+            return ResponseEntity.ok(cartService.removeCartItemCompletely(cartItemId, userId));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
     @DeleteMapping("/{userId}")
     public ResponseEntity<?> deleteCart(@PathVariable("userId") Long userId) {
         try {

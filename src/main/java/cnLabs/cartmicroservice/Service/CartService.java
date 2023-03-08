@@ -72,6 +72,20 @@ public class CartService {
     }
 
     @Transactional
+    public Cart removeCartItemCompletely(Long itemId, Long userId) {
+        Cart cart = cartRepository.findByUserId(userId);
+        for (CartItem item : cart.getItems()) {
+            if (item.getItemId().equals(itemId)) {
+                item.setAmount(0);
+            }
+        }
+
+        cart.removeCartItem(itemId);
+        cart = cartRepository.save(cart);
+        return cart;
+    }
+
+    @Transactional
     public void deleteCartByUserId(Long userId) {
         Cart cart = cartRepository.findByUserId(userId);
         cartRepository.delete(cart);
@@ -81,8 +95,14 @@ public class CartService {
     @Transactional
     public Cart updateAmount(Long userId, Long cartItemId, Integer amount) {
         Cart cart = cartRepository.findByUserId(userId);
-        cart.getItems().stream().filter(i -> i.getId().compareTo(cartItemId) == 0)
-                .findFirst().ifPresent(cartItem -> cartItem.setAmount(amount));
+//        cart.getItems().stream().filter(i -> i.getId().compareTo(cartItemId) == 0)  // I don't understand why this didn't work.
+//                .findFirst().ifPresent(cartItem -> cartItem.setAmount(amount));
+        for (CartItem item : cart.getItems()) {
+            if (item.getItemId().equals(cartItemId)) {
+                item.setAmount(amount);
+            }
+        }
+        cart = cartRepository.save(cart);
         return cart;
     }
 }
